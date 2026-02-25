@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CandyLand - Online</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0d0914;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: env(safe-area-inset-top, 20px) 20px 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .stats-group {
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.9rem;
+            margin: 0;
+            background: linear-gradient(to right, #7eb2ff, #ff837a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-display {
+            font-size: 0.9rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .score-container {
+            text-align: right;
+            pointer-events: auto;
+        }
+
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(122, 252, 255, 0.5);
+        }
+
+        #pause-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            pointer-events: auto;
+            margin-top: 5px;
+        }
+
+        #game-board {
+            position: relative;
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #000000 0%, #11233f 100%);
+            overflow: hidden;
+        }
+
+        .block {
+            position: absolute;
+            background-size: 85% 85%;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), left 0.3s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .block.selected {
+            filter: brightness(1.5) drop-shadow(0 0 10px white);
+            transform: scale(1.1);
+            z-index: 20;
+        }
+
+        .block.pop {
+            animation: popOut 0.3s forwards ease-in;
+        }
+
+        @keyframes popOut {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 10vw, 4rem);
+            color: #fff;
+            text-shadow: 0 0 20px #ff00ff;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 100;
+            text-align: center;
+            width: 100%;
+        }
+
+        #message.animate {
+            animation: msgPop 1s forwards;
+        }
+
+        @keyframes msgPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        #pause-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(0, 0, 0);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        #pause-overlay.show {
+            display: flex;
+        }
+
+        .menu-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #7afcff;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: 'Cinzel', serif;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            width: 200px;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.4);
+        }
+
+        .menu-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <div class="stats-group">
+            <h1>CandyLand</h1>
+            <div class="gold-display"><img style="width:30px;" src="assets/coin.png"><span style="font-size:26px;" id="gold"> 0</span></div>
+        </div>
+        <div class="score-container">
+            <div class="score-value" id="score">0</div>
+            <button id="pause-btn">PAUSE</button>
+        </div>
+    </div>
+
+    <div id="game-board"></div>
+    <div id="message">COMBO!</div>
+
+    <div id="pause-overlay">
+        <div class="menu-title">PAUSED</div>
+        <button class="menu-btn" id="resume-btn">RESUME</button>
+        <button class="menu-btn secondary" id="restart-btn">RESTART</button>
+    </div>
+
+    <!-- Import Sound Effects Manager -->
+    <script src="sfx.js"></script>
+
+    <script>
+        const blockTypes = [
+            { id: 'KitKat', img: 'assets/candy/kit-kat.png' },
+            { id: 'Hershey', img: 'assets/candy/hershey.png' },
+            { id: 'green', img: 'https://img.icons8.com/plasticine/200/leaf.png' },
+            { id: 'yellow', img: 'https://img.icons8.com/plasticine/200/lightning-bolt.png' },
+            { id: 'purple', img: 'https://img.icons8.com/plasticine/200/crystal-ball.png' },
+            { id: 'orange', img: 'https://img.icons8.com/plasticine/200/sun.png' }
+        ];
+
+        const rows = 8;
+        const cols = 8;
+        let board = [];
+        let isAnimating = false;
+        let isPaused = false;
+        let score = 0;
+        let gold = 0;
+        let cellSize = 0;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        const boardEl = document.getElementById('game-board');
+        const scoreEl = document.getElementById('score');
+        const goldEl = document.getElementById('gold');
+        const messageEl = document.getElementById('message');
+        const pauseOverlay = document.getElementById('pause-overlay');
+
+        function calculateLayout() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            const availableHeight = height * 0.9; 
+            
+            cellSize = width / cols;
+            
+            if (cellSize * rows > availableHeight) {
+                cellSize = availableHeight / rows;
+            }
+            
+            offsetX = (width - (cols * cellSize)) / 2;
+            offsetY = (height - (rows * cellSize)) / 2 + 30;
+
+            for (let r = 0; r < rows; r++) {
+                if (!board[r]) continue;
+                for (let c = 0; c < cols; c++) {
+                    const block = board[r][c];
+                    if (block && block.el) {
+                        block.el.style.width = `${cellSize}px`;
+                        block.el.style.height = `${cellSize}px`;
+                        block.el.style.left = `${c * cellSize + offsetX}px`;
+                        block.el.style.top = `${r * cellSize + offsetY}px`;
+                    }
+                }
+            }
+        }
+
+        function initGame(isRestart = false) {
+            if (isRestart) {
+                gold += score;
+                goldEl.innerText = gold;
+            }
+
+            boardEl.innerHTML = '';
+            board = [];
+            score = 0;
+            scoreEl.innerText = score;
+            isAnimating = false;
+            
+            calculateLayout();
+
+            for (let r = 0; r < rows; r++) {
+                board[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    let type;
+                    do {
+                        type = blockTypes[Math.floor(Math.random() * blockTypes.length)];
+                    } while (
+                        (c >= 2 && board[r][c-1].type.id === type.id && board[r][c-2].type.id === type.id) ||
+                        (r >= 2 && board[r-1][c].type.id === type.id && board[r-2][c].type.id === type.id)
+                    );
+                    createBlock(r, c, type);
+                }
+            }
+        }
+
+        function createBlock(r, c, type, dropOffset = 0) {
+            const el = document.createElement('div');
+            el.className = 'block';
+            el.style.backgroundImage = `url(${type.img})`;
+            el.style.width = `${cellSize}px`;
+            el.style.height = `${cellSize}px`;
+            el.style.left = `${c * cellSize + offsetX}px`;
+            el.style.top = `${(r - dropOffset) * cellSize + offsetY}px`;
+            
+            boardEl.appendChild(el);
+            
+            const block = { r, c, type, el };
+            board[r][c] = block;
+            
+            if (dropOffset > 0) {
+                setTimeout(() => {
+                    el.style.top = `${r * cellSize + offsetY}px`;
+                }, 10);
+            }
+            return block;
+        }
+
+        let dragStart = null;
+
+        boardEl.addEventListener('pointerdown', e => {
+            if (isAnimating || isPaused) return;
+            const c = Math.floor((e.clientX - offsetX) / cellSize);
+            const r = Math.floor((e.clientY - offsetY) / cellSize);
+            if (r >= 0 && r < rows && c >= 0 && c < cols) {
+                dragStart = { r, c, x: e.clientX, y: e.clientY };
+                board[r][c].el.classList.add('selected');
+            }
+        });
+
+        window.addEventListener('pointermove', e => {
+            if (!dragStart || isAnimating || isPaused) return;
+            
+            const dx = e.clientX - dragStart.x;
+            const dy = e.clientY - dragStart.y;
+            const dist = cellSize * 0.3;
+
+            if (Math.abs(dx) > dist || Math.abs(dy) > dist) {
+                let r2 = dragStart.r;
+                let c2 = dragStart.c;
+
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    c2 += dx > 0 ? 1 : -1;
+                } else {
+                    r2 += dy > 0 ? 1 : -1;
+                }
+
+                board[dragStart.r][dragStart.c].el.classList.remove('selected');
+                if (r2 >= 0 && r2 < rows && c2 >= 0 && c2 < cols) {
+                    swapBlocks(dragStart.r, dragStart.c, r2, c2);
+                    // SFX: Moving candy
+                    if (window.sfx) sfx.playMove();
+                }
+                dragStart = null;
+            }
+        });
+
+        window.addEventListener('pointerup', () => {
+            if (dragStart) {
+                board[dragStart.r][dragStart.c].el.classList.remove('selected');
+                dragStart = null;
+            }
+        });
+
+        async function swapBlocks(r1, c1, r2, c2) {
+            isAnimating = true;
+            const b1 = board[r1][c1];
+            const b2 = board[r2][c2];
+
+            b1.el.style.left = `${c2 * cellSize + offsetX}px`;
+            b1.el.style.top = `${r2 * cellSize + offsetY}px`;
+            b2.el.style.left = `${c1 * cellSize + offsetX}px`;
+            b2.el.style.top = `${r1 * cellSize + offsetY}px`;
+
+            board[r1][c1] = b2; board[r2][c2] = b1;
+            b1.r = r2; b1.c = c2; b2.r = r1; b2.c = c1;
+
+            await new Promise(r => setTimeout(r, 300));
+
+            const matches = findMatches();
+            if (matches.length > 0) {
+                handleMatches(matches);
+            } else {
+                b1.el.style.left = `${c1 * cellSize + offsetX}px`;
+                b1.el.style.top = `${r1 * cellSize + offsetY}px`;
+                b2.el.style.left = `${c2 * cellSize + offsetX}px`;
+                b2.el.style.top = `${r2 * cellSize + offsetY}px`;
+                board[r1][c1] = b1; board[r2][c2] = b2;
+                b1.r = r1; b1.c = c1; b2.r = r2; b2.c = c2;
+                isAnimating = false;
+            }
+        }
+
+        function findMatches() {
+            const matched = new Set();
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols - 2; c++) {
+                    const id = board[r][c].type.id;
+                    if (board[r][c+1].type.id === id && board[r][c+2].type.id === id) {
+                        matched.add(`${r},${c}`); matched.add(`${r},${c+1}`); matched.add(`${r},${c+2}`);
+                    }
+                }
+            }
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows - 2; r++) {
+                    const id = board[r][c].type.id;
+                    if (board[r+1][c].type.id === id && board[r+2][c].type.id === id) {
+                        matched.add(`${r},${c}`); matched.add(`${r+1},${c}`); matched.add(`${r+2},${c}`);
+                    }
+                }
+            }
+            return Array.from(matched).map(s => s.split(',').map(Number));
+        }
+
+        async function handleMatches(matches, combo = 1) {
+            score += matches.length * 10 * combo;
+            scoreEl.innerText = score;
+
+            if (combo > 1) {
+                messageEl.innerText = `${combo}X COMBO!`;
+                messageEl.classList.remove('animate');
+                void messageEl.offsetWidth;
+                messageEl.classList.add('animate');
+                // SFX: Hitting a combo
+                if (window.sfx) sfx.playCombo(combo);
+            }
+
+            matches.forEach(([r, c]) => board[r][c].el.classList.add('pop'));
+            await new Promise(r => setTimeout(r, 300));
+
+            matches.forEach(([r, c]) => {
+                board[r][c].el.remove();
+                board[r][c] = null;
+            });
+
+            for (let c = 0; c < cols; c++) {
+                let holes = 0;
+                for (let r = rows - 1; r >= 0; r--) {
+                    if (board[r][c] === null) {
+                        holes++;
+                    } else if (holes > 0) {
+                        const b = board[r][c];
+                        board[r + holes][c] = b;
+                        board[r][c] = null;
+                        b.r = r + holes;
+                        b.el.style.top = `${b.r * cellSize + offsetY}px`;
+                    }
+                }
+                for (let h = 0; h < holes; h++) {
+                    createBlock(holes - 1 - h, c, blockTypes[Math.floor(Math.random() * blockTypes.length)], holes);
+                }
+            }
+
+            await new Promise(r => setTimeout(r, 400));
+            const nextMatches = findMatches();
+            if (nextMatches.length > 0) {
+                handleMatches(nextMatches, combo + 1);
+            } else {
+                isAnimating = false;
+            }
+        }
+
+        document.getElementById('pause-btn').addEventListener('click', () => {
+            isPaused = true;
+            pauseOverlay.classList.add('show');
+            // SFX: Pause button
+            if (window.sfx) sfx.playPause();
+        });
+
+        document.getElementById('resume-btn').addEventListener('click', () => {
+            isPaused = false;
+            pauseOverlay.classList.remove('show');
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            isPaused = false;
+            pauseOverlay.classList.remove('show');
+            initGame(true);
+        });
+
+        window.addEventListener('resize', calculateLayout);
+        window.onload = () => initGame();
+    </script>
+</body>
+</html>
