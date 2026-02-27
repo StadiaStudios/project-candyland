@@ -1,3 +1,6 @@
+V1.1.4- - - 
+Islands now have multipliers. 
+
 V1.0.4- - - 
 First official beta release. Everything should be working. New Maps. Themes. Sound Effects. Settings. Data transfering etc. 
 Free to play now!

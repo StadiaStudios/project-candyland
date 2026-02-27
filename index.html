@@ -300,14 +300,14 @@
                             document.body.style.background = window.IslandTheme.backgroundGradient;
                         }
                         if (window.IslandTheme.bombImage) {
-    BOMB_TYPE.img = window.IslandTheme.bombImage;
-}
+                            BOMB_TYPE.img = window.IslandTheme.bombImage;
+                        }
                         if (window.IslandTheme.boardImage) {
                             boardEl.style.backgroundImage = `url(${window.IslandTheme.boardImage})`;
                         }
                         if (window.IslandTheme.music && typeof bgm !== 'undefined') {
-    bgm.src = window.IslandTheme.music;
-}
+                            bgm.src = window.IslandTheme.music;
+                        }
                     }
                     resolve();
                 };
@@ -363,7 +363,24 @@
         }
 
         function initGame(isRestart = false) {
-            if (isRestart) { gold += score; saveGold(); }
+            // --- NEW: Multiplier logic added here ---
+            if (isRestart) { 
+                // Default multiplier is 1.0 (no change)
+                let multiplier = 1.0; 
+                
+                // If a theme is loaded and has a multiplier, use it
+                if (window.IslandTheme && window.IslandTheme.scoreMultiplier) {
+                    multiplier = window.IslandTheme.scoreMultiplier;
+                }
+                
+                // Calculate earned gold with the multiplier
+                let earnedGold = Math.floor(score * multiplier);
+                gold += earnedGold; 
+                
+                saveGold(); 
+            }
+            // --- End of multiplier logic ---
+
             goldEl.innerText = gold;
             boardEl.innerHTML = '';
             board = []; score = 0; bombActive = false;
@@ -391,14 +408,14 @@
             el.className = 'block';
             if (type.isBomb) { el.classList.add('bomb'); bombActive = true; }
             const imageUrl = type.isBomb ? BOMB_TYPE.img : type.img;
-el.style.backgroundImage = `url(${imageUrl})`;
+            el.style.backgroundImage = `url(${imageUrl})`;
             el.style.width = `${cellSize}px`; el.style.height = `${cellSize}px`;
             el.style.left = `${c * cellSize + offsetX}px`;
             el.style.top = `${(r - dropOffset) * cellSize + offsetY}px`;
             boardEl.appendChild(el);
             if (window.IslandTheme && window.IslandTheme.blockBorderColor) {
-    el.style.borderColor = window.IslandTheme.blockBorderColor;
-}
+                el.style.borderColor = window.IslandTheme.blockBorderColor;
+            }
             board[r][c] = { r, c, type, el };
             if (dropOffset > 0) setTimeout(() => { el.style.top = `${r * cellSize + offsetY}px`; }, 10);
         }
