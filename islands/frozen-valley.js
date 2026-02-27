@@ -8,7 +8,7 @@ window.IslandTheme = {
     music: 'assets/sfx/frozen-valley.mp3',
     blockBorderColor: '#74b0ff',
     blocks: [
-        { id: 'Reece', img: 'assets/candy/frozen-valley/Reece.png' },
+        { id: 'Reece', img: 'assets/candy/frozen-valley/reece.png' },
         { id: 'Twix', img: 'assets/candy/frozen-valley/twix.png' },
         { id: 'Hershey', img: 'assets/candy/frozen-valley/hershey.png' },
         { id: 'Cookie', img: 'assets/candy/frozen-valley/cookie.png' },
