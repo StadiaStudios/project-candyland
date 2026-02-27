@@ -1,0 +1,80 @@
+=========================================
+CANDYSWAP - APP DESCRIPTION
+
+Title: CandySwap - Free To Play
+Tagline: Match, Pop, and Blast your way through a sweet puzzle adventure!
+
+Description:
+Dive into the vibrant world of CandySwap, a fast-paced match-3 puzzle game designed for instant fun! Swap colorful candies to create massive combos, rack up high scores, and collect gold. Use your hard-earned treasure in the Island Shop to unlock stunning new backgrounds and customize your gameplay experience. With explosive candy bombs and satisfying chain reactions, CandySwap is the ultimate "pick-up-and-play" experience for puzzle lovers everywhere.
+
+Key Features:
+
+Classic Match-3 Gameplay: Simple to learn, yet challenging to master.
+
+Explosive Candy Bombs: Trigger massive blasts to clear the board.
+
+Island Shop: Earn gold by playing and unlock unique island themes.
+
+Responsive Design: Optimized for both mobile and desktop play.
+
+Immersive Audio: Satisfying sound effects and a catchy background score.
+
+=========================================
+HOW TO PLAY & GAME MECHANICS
+
+THE GOAL
+Your objective is to match 3 or more candies of the same color in a row (horizontally or vertically). Each match increases your score and earns you gold to spend in the shop.
+
+BASIC CONTROLS
+
+Selection: Click or tap a candy to select it.
+
+Swapping: Click/tap an adjacent candy (up, down, left, or right) to swap their positions.
+
+Invalid Moves: If a swap doesn't result in a match-3 or better, the candies will slide back to their original spots.
+
+SPECIAL ITEMS: THE CANDY BOMB
+
+Spawning: Bombs have a 5% chance to appear whenever new candies drop onto the board.
+
+Activation: Unlike regular candies, you don't swap bombs. Simply click or tap a Candy Bomb to detonate it.
+
+Effect: The bomb explodes in a large radius, clearing all surrounding candies and awarding bonus points. This is perfect for clearing "deadlocks" or triggering massive chain reactions.
+
+THE COMBO SYSTEM
+When candies are cleared, new ones fall from the top. If these falling candies form new matches automatically, you trigger a "Combo." Every consecutive combo provides a score multiplier, making it the best way to hit top scores.
+
+THE SHOP & PROGRESSION
+
+Earning Gold: Every match you make on the board adds to your total gold count.
+
+Customization: Visit the "Island Shop" from the main menu.
+
+Unlockable Themes:
+
+Default Island (Owned)
+
+Candy Island (1,000 Gold)
+
+Chocolate Island (2,500 Gold)
+
+Gummy Island (5,000 Gold)
+
+Equipping: Once purchased, you can "Equip" an island to change the game's background wallpaper.
+
+TIPS FOR SUCCESS
+
+Look for "L-shapes" or "T-shapes": Matching 4 or 5 candies at once doesn't just look cool; it maximizes your score density.
+
+Save your Bombs: Don't use a bomb the moment it appears. Wait until you have a board layout that is hard to match, or use it to trigger a cascade of falling candies.
+
+Check the Shop often: Changing your island theme can give the game a fresh feel as you aim for higher scores!
+
+=========================================
+TECHNICAL CONTROLS
+
+Pause: Use the Pause button in the top-right to halt the timer/action.
+
+Restart: Access the pause menu to reset the board at any time.
+
+Audio: The game features dynamic sound. Ensure your device is not on silent to enjoy the full experience.

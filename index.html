@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CandySwap - Free To Play</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/x-icon" href="assets/favicon.jpeg">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@400;700&display=swap');
@@ -135,7 +136,7 @@
             background-repeat: no-repeat;
             transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), left 0.3s ease;
             cursor: pointer;
-            background-color: #111111cb;
+            background-color: #11111191;
             border: 1px solid rgb(0, 255, 128);
             z-index: 10;
         }
@@ -223,7 +224,7 @@
         }
 
         .menu-btn {
-            background: linear-gradient(135deg, #ff5858, #5c1010);
+            background: linear-gradient(135deg, #ff61f2, #460491);
             border: none;
             color: white;
             padding: 15px 40px;
@@ -264,16 +265,17 @@
     <div id="pause-overlay">
         <div class="menu-title">PAUSED</div>
         <button class="menu-btn" id="resume-btn">RESUME</button>
-        <button class="menu-btn secondary" id="restart-btn">RESTART</button>
+        <a href="shop.html"><button class="menu-btn">SHOP</button></a>
+        <button class="menu-btn secondary" id="restart-btn">CLAIM</button>
+        <a href="settings.html"><button class="menu-btn">SETTINGS</button></a>
     </div>
 
     <script src="sound.js"></script>
     <script src="mainmenu.js"></script>
 
     <script>
-        /** * Game Logic 
-         */
-        const blockTypes = [
+        /** * Theme & Block Logic **/
+        let blockTypes = [
             { id: 'KitKat', img: 'assets/candy/kit-kat.png' },
             { id: 'Hershey', img: 'assets/candy/hershey.png' },
             { id: 'ReeceCup', img: 'assets/candy/reece-cup.png' },
@@ -284,13 +286,47 @@
 
         const BOMB_TYPE = { id: 'Bomb', img: 'assets/candy/bomb.png', isBomb: true };
 
+        async function loadIslandTheme() {
+            const activeIsland = localStorage.getItem('candySwap_activeIsland');
+            if (!activeIsland || activeIsland === 'default') return;
+
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = `islands/${activeIsland}.js`;
+                script.onload = () => {
+                    if (window.IslandTheme) {
+                        blockTypes = window.IslandTheme.blocks;
+                        if (window.IslandTheme.backgroundGradient) {
+                            document.body.style.background = window.IslandTheme.backgroundGradient;
+                        }
+                        if (window.IslandTheme.bombImage) {
+    BOMB_TYPE.img = window.IslandTheme.bombImage;
+}
+                        if (window.IslandTheme.boardImage) {
+                            boardEl.style.backgroundImage = `url(${window.IslandTheme.boardImage})`;
+                        }
+                        if (window.IslandTheme.music && typeof bgm !== 'undefined') {
+    bgm.src = window.IslandTheme.music;
+}
+                    }
+                    resolve();
+                };
+                script.onerror = () => {
+                    console.error("Failed to load island theme:", activeIsland);
+                    resolve();
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        /** * Game Engine **/
         let rows = 8, cols = 8;
         let board = [];
         let isAnimating = false;
         let isPaused = false;
         let score = 0;
         let gold = parseInt(localStorage.getItem('candySwap_gold')) || 0;
-        let bombActive = false; // Tracks if a bomb is currently on board
+        let bombActive = false; 
         
         let cellSize = 0, offsetX = 0, offsetY = 0;
 
@@ -354,11 +390,15 @@
             const el = document.createElement('div');
             el.className = 'block';
             if (type.isBomb) { el.classList.add('bomb'); bombActive = true; }
-            el.style.backgroundImage = `url(${type.img})`;
+            const imageUrl = type.isBomb ? BOMB_TYPE.img : type.img;
+el.style.backgroundImage = `url(${imageUrl})`;
             el.style.width = `${cellSize}px`; el.style.height = `${cellSize}px`;
             el.style.left = `${c * cellSize + offsetX}px`;
             el.style.top = `${(r - dropOffset) * cellSize + offsetY}px`;
             boardEl.appendChild(el);
+            if (window.IslandTheme && window.IslandTheme.blockBorderColor) {
+    el.style.borderColor = window.IslandTheme.blockBorderColor;
+}
             board[r][c] = { r, c, type, el };
             if (dropOffset > 0) setTimeout(() => { el.style.top = `${r * cellSize + offsetY}px`; }, 10);
         }
@@ -435,7 +475,7 @@
         async function handleMatches(matches, combo = 1, triggeredBombs = []) {
             if (window.playSound) window.playSound(triggeredBombs.length > 0 ? 'bomb' : 'combo');
             if (triggeredBombs.length > 0) {
-                bombActive = false; // Bomb used, can spawn another later
+                bombActive = false; 
                 triggeredBombs.forEach(bomb => {
                     for(let dr = -1; dr <= 1; dr++) {
                         for(let dc = -1; dc <= 1; dc++) {
@@ -460,7 +500,6 @@
                     }
                 }
                 for (let h = 0; h < holes; h++) {
-                    // Only spawn a bomb if none currently exist on board
                     const isBombSpawn = !bombActive && Math.random() < 0.05;
                     const type = isBombSpawn ? BOMB_TYPE : blockTypes[Math.floor(Math.random() * blockTypes.length)];
                     createBlock(holes - 1 - h, c, type, holes);
@@ -473,7 +512,10 @@
         }
 
         window.addEventListener('resize', calculateLayout);
-        window.onload = () => { initGame(); };
+        window.onload = async () => { 
+            await loadIslandTheme();
+            initGame(); 
+        };
     </script>
 </body>
 </html>

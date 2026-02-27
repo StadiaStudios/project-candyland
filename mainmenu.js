@@ -1,6 +1,3 @@
-/**
- * mainmenu.js - Handles Pause, Resume, and Restart UI
- */
 (function() {
     const pauseOverlay = document.getElementById('pause-overlay');
     const pauseBtn = document.getElementById('pause-btn');
@@ -32,7 +29,6 @@
         });
     }
 
-    // Expose background music trigger for first interaction
     window.MenuSystem = {
         tryStartBGM: function() {
             if (window.tryStartBGM) window.tryStartBGM();

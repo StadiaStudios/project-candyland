@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Settings - CandySwap</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.jpeg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@400;700&display=swap');
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #ff61f2, #460491); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff00ff; }
+        * { scrollbar-width: thin; scrollbar-color: #ff61f2 rgba(255, 255, 255, 0.05); }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a0a2e;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100dvh;
+            overflow-y: auto;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #ffd700;
+        }
+
+        .settings-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #ff61f2;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 97, 242, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: 700;
+            color: #ccc;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .value {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .income-value {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .link-item {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .link-item:hover {
+            color: #ff61f2;
+            text-decoration: underline;
+        }
+
+        .data-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ff61f2;
+        }
+
+        .action-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffd700;
+        }
+
+        #import-input {
+            display: none;
+        }
+
+        .footer-note {
+            margin-top: auto;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            padding-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Message Toast */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            background: #460491;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border: 1px solid #ff61f2;
+            transform: translateY(100px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+        #toast.show { transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html" class="back-btn">← GAME</a>
+        <h1>SETTINGS</h1>
+        <div style="width: 70px;"></div>
+    </div>
+
+    <div class="settings-container">
+        <div class="section-title">Statistics</div>
+        <div class="setting-item">
+            <span class="label">Game Version</span>
+            <span class="value" id="version-display">v1.0.4</span>
+        </div>
+        <div class="setting-item">
+            <span class="label">Lifetime Gold</span>
+            <span class="value income-value" id="lifetime-income">0</span>
+        </div>
+    </div>
+
+    <div class="settings-container">
+        <div class="section-title">Resources</div>
+        <div class="setting-item">
+            <span class="label">Official Website</span>
+            <a href="https://stadiastudios.github.io/stadia/" target="_blank" class="link-item">VISIT SITE</a>
+        </div>
+        <div class="setting-item">
+            <span class="label">Update History</span>
+            <a href="changelog.txt" target="_blank" class="link-item">VIEW CHANGELOG</a>
+        </div>
+    </div>
+
+    <div class="settings-container">
+        <div class="section-title">Data Management</div>
+        <div class="data-actions">
+            <button class="action-btn" onclick="exportData()">
+                <svg viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>
+                DOWNLOAD DATA
+            </button>
+            <button class="action-btn" onclick="triggerImport()">
+                <svg viewBox="0 0 24 24"><path d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z"/></svg>
+                IMPORT DATA
+            </button>
+        </div>
+        <input type="file" id="import-input" accept=".json" onchange="importData(event)">
+    </div>
+
+    <div class="footer-note">
+        CandySwap • Progress is saved locally
+    </div>
+
+    <div id="toast">Progress Saved!</div>
+
+    <script>
+        const STORAGE_KEYS = {
+            gold: 'candySwap_gold',
+            lifetime: 'candySwap_lifetimeGold',
+            owned: 'candySwap_owned',
+            active: 'candySwap_activeIsland'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+        });
+
+        function updateStats() {
+            const currentGold = parseInt(localStorage.getItem(STORAGE_KEYS.gold)) || 0;
+            const lifetimeGold = parseInt(localStorage.getItem(STORAGE_KEYS.lifetime)) || currentGold;
+            document.getElementById('lifetime-income').innerText = lifetimeGold.toLocaleString();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function exportData() {
+            const data = {
+                gold: localStorage.getItem(STORAGE_KEYS.gold),
+                lifetime: localStorage.getItem(STORAGE_KEYS.lifetime),
+                owned: localStorage.getItem(STORAGE_KEYS.owned),
+                active: localStorage.getItem(STORAGE_KEYS.active),
+                exportDate: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `CandySwap_Save_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("Backup Downloaded!");
+        }
+
+        function triggerImport() {
+            document.getElementById('import-input').click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validation: Ensure it looks like our save data
+                    if (data.gold !== undefined || data.owned !== undefined) {
+                        if (data.gold) localStorage.setItem(STORAGE_KEYS.gold, data.gold);
+                        if (data.lifetime) localStorage.setItem(STORAGE_KEYS.lifetime, data.lifetime);
+                        if (data.owned) localStorage.setItem(STORAGE_KEYS.owned, data.owned);
+                        if (data.active) localStorage.setItem(STORAGE_KEYS.active, data.active);
+                        
+                        updateStats();
+                        showToast("Data Imported Successfully!");
+                    } else {
+                        showToast("Invalid save file!");
+                    }
+                } catch (err) {
+                    showToast("Error reading file!");
+                }
+            };
+            reader.readAsText(file);
+            // Reset input so the same file can be uploaded again if needed
+            event.target.value = '';
+        }
+    </script>
+</body>
+</html>

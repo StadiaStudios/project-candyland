@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Shop - CandySwap</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/x-icon" href="assets/favicon.jpeg">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@400;700&display=swap');
+
+    body {
+        margin: 0;
+        padding: 20px;
+        background: #1a0a2e;
+        color: white;
+        font-family: 'Nunito', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 50px;
+    }
+
+    .header {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid white;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-family: 'Cinzel', serif;
+        transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    .gold-display {
+        font-size: 1.5rem;
+        color: gold;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0,0,0,0.4);
+        padding: 5px 15px;
+        border-radius: 20px;
+        border: 1px solid #ffd700;
+    }
+
+    .page-title {
+        font-family: 'Cinzel', serif;
+        font-size: 2.5rem;
+        margin-top: 0;
+        text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        text-align: center;
+    }
+
+    .shop-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    @media (min-width: 650px) {
+        .shop-grid {
+            grid-template-columns: 1fr 1fr;
+            max-width: 800px;
+        }
+    }
+
+    .island-card {
+        background: rgba(255,255,255,0.05);
+        border: 2px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        transition: 0.3s;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .island-card.active {
+        border-color: #ff00ff;
+        background: rgba(255, 0, 255, 0.08);
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+    }
+
+    .island-card.locked {
+        filter: grayscale(1) brightness(0.5);
+        cursor: not-allowed;
+    }
+
+    .lock-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.4);
+        z-index: 10;
+        font-family: 'Cinzel', serif;
+    }
+
+    .island-preview {
+        width: 100%;
+        height: 160px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #2a104a;
+        border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .island-info {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    .island-info h2 {
+        margin: 0 0 5px 0;
+        font-family: 'Cinzel', serif;
+        color: #7afcff;
+        font-size: 1.4rem;
+    }
+
+    .island-info p {
+        margin: 0;
+        font-size: 0.95rem;
+        opacity: 0.8;
+        line-height: 1.4;
+    }
+
+    .buy-btn {
+        background: linear-gradient(135deg, #ff61f2, #460491);
+        border: 2px solid #ff00ff;
+        color: white;
+        padding: 12px;
+        border-radius: 10px;
+        font-family: 'Cinzel', serif;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.1s, filter 0.2s;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .buy-btn:hover {
+        filter: brightness(1.2);
+    }
+
+    .buy-btn:active {
+        transform: scale(0.96);
+    }
+
+    .buy-btn:disabled {
+        background: #333;
+        border-color: #555;
+        cursor: not-allowed;
+        filter: none;
+    }
+
+    .equip-btn {
+        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        border: 2px solid #00d2ff;
+    }
+
+    .owned-badge {
+        color: #00ff88;
+        font-weight: bold;
+        text-align: center;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        padding: 11px;
+        border-radius: 10px;
+        font-family: 'Cinzel', serif;
+        letter-spacing: 2px;
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(3px);
+    }
+
+    .modal-box {
+        background: #1a0a2e;
+        border: 2px solid #ff00ff;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        max-width: 300px;
+        width: 80%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .modal-box p {
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+        font-weight: bold;
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #ff61f2, #460491); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ff00ff; }
+    * { scrollbar-width: thin; scrollbar-color: #ff61f2 rgba(255, 255, 255, 0.05); }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <a href="index.html" class="back-btn">← BACK</a>
+    <div class="gold-display">
+        <img style="width:24px; height:24px;" src="assets/coin.png" alt="💰" onerror="this.style.display='none'; this.nextSibling.textContent='💰 '"> 
+        <span id="gold-val">0</span>
+    </div>
+</div>
+
+<h1 class="page-title">ISLANDS</h1>
+
+<div class="shop-grid" id="shop-grid"></div>
+
+<div id="msg-modal" class="modal-overlay">
+    <div class="modal-box">
+        <p id="msg-text"></p>
+        <button class="buy-btn" onclick="closeModal()" style="width: 150px;">OK</button>
+    </div>
+</div>
+
+<script>
+    const buySfx = new Audio('assets/sfx/buy.mp3');
+    const equipSfx = new Audio('assets/sfx/select.mp3');
+
+    const islands = [
+        { 
+            id: 'default', 
+            name: 'Classic Valley', 
+            price: 0, 
+            desc: 'The original sweet experience.', 
+            image: 'assets/bg/1.png'
+        },
+        { 
+            id: 'xmas_2025', 
+            name: 'Xmas 2025', 
+            price: 3500, 
+            desc: 'A festive winter wonderland.', 
+            image: 'assets/bg/xmas_2025.png'
+        },
+        { 
+            id: 'chocolate-meteor', 
+            name: 'Chocolate Meteor', 
+            price: 5000, 
+            desc: 'Floating Chocolate waterfall islands.', 
+            image: 'assets/bg/2.png'
+        },
+        { 
+            id: 'frozen-valley', 
+            name: 'Frozen Valley', 
+            price: 8000, 
+            desc: 'Frozen Over Treats!', 
+            image: 'assets/bg/frozen-valley.png'
+        }
+    ];
+
+    let gold = parseInt(localStorage.getItem('candySwap_gold')) || 0;
+    let owned = JSON.parse(localStorage.getItem('candySwap_owned')) || ['default'];
+    let active = localStorage.getItem('candySwap_activeIsland') || 'default';
+
+    document.getElementById('gold-val').innerText = gold;
+
+    function showMessage(msg) {
+        document.getElementById('msg-text').innerText = msg;
+        document.getElementById('msg-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('msg-modal').style.display = 'none';
+    }
+
+    function render() {
+        const grid = document.getElementById('shop-grid');
+        grid.innerHTML = '';
+
+        islands.forEach((island, index) => {
+            const isOwned = owned.includes(island.id);
+            const isActive = active === island.id;
+            const previousIslandOwned = index === 0 || owned.includes(islands[index - 1].id);
+            const isLocked = !isOwned && !previousIslandOwned;
+
+            const card = document.createElement('div');
+            card.className = `island-card ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`;
+            
+            if (isLocked) {
+                card.innerHTML = `
+                    <div class="lock-overlay">
+                        <img style="width:170px;" src="assets/titleimg.png" alt="Locked">
+                    </div>
+                    <img src="${island.image}" class="island-preview" style="visibility: hidden;">
+                    <div class="island-info" style="visibility: hidden;">
+                        <h2>??????</h2>
+                        <p>Purchase previous map to unlock</p>
+                    </div>
+                    <button class="buy-btn" disabled>LOCKED</button>
+                `;
+            } else {
+                card.innerHTML = `
+                    <img src="${island.image}" class="island-preview" alt="${island.name}" onerror="this.style.background='#333'">
+                    <div class="island-info">
+                        <h2>${island.name}</h2>
+                        <p>${island.desc}</p>
+                    </div>
+                    ${isOwned 
+                        ? (isActive ? '<div class="owned-badge">EQUIPPED</div>' : `<button class="buy-btn equip-btn" onclick="selectIsland('${island.id}')">EQUIP</button>`)
+                        : `<button class="buy-btn" onclick="buy('${island.id}', ${island.price})">BUY — ${island.price} GOLD</button>`
+                    }
+                `;
+            }
+            grid.appendChild(card);
+        });
+    }
+
+    window.buy = (id, price) => {
+        if (gold >= price) {
+            gold -= price;
+            owned.push(id);
+            localStorage.setItem('candySwap_gold', gold);
+            localStorage.setItem('candySwap_owned', JSON.stringify(owned));
+            document.getElementById('gold-val').innerText = gold;
+            buySfx.currentTime = 0;
+            buySfx.play().catch(() => {});
+            selectIsland(id, false); 
+        } else {
+            showMessage("Not enough gold!");
+        }
+    };
+
+    window.selectIsland = (id, playSound = true) => {
+        active = id;
+        localStorage.setItem('candySwap_activeIsland', id);
+        if(playSound) {
+            equipSfx.currentTime = 0;
+            equipSfx.play().catch(() => {});
+        }
+        render();
+    };
+
+    render();
+</script>
+</body>
+</html>
