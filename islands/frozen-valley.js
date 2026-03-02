@@ -1,6 +1,7 @@
 window.IslandTheme = {
     id: 'frozen-valley',
     name: 'Frozen Valley',
+    scoreMultiplier: 1.05,
     backgroundColor: '#8581d4',
     backgroundGradient: 'linear-gradient(rgb(93 120 204) 0%, rgb(101 76 207) 100%)',
     boardImage: 'assets/bg/frozen-valley.png', 
