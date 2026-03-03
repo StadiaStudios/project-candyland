@@ -58,6 +58,14 @@
         margin-bottom: 30px;
         flex-wrap: wrap;
         gap: 15px;
+        
+        /* Sticky properties added below */
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: var(--bg-color);
+        padding: 20px 0 15px 0;
+        margin-top: -20px; /* Offset the body padding to stick flush to the top */
     }
 
     .header-right {
