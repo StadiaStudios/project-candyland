@@ -1,5 +1,8 @@
+V1.3.6- - - 
+Bikini Bottom Map Fixes and Tweaks, Shop Price Tweaks, 
+
 V1.3.5- - - 
-Bug Fixes, Maps Are now split into chapters, Maps now Have Custom Coin Images, Shop Price Tweaks And Tweaks to Chapters, Players can now 
+Bug Fixes, Maps Are now split into chapters, Maps now Have Custom Coin Images, Tweaks to Chapters, Players can now 
 choose any map in the chapter but not any other chapters until all previous ones are unlocked.
 -New Chapters:
 Classic Valley

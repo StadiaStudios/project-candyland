@@ -13,8 +13,8 @@ window.IslandTheme = {
         { id: 'KrabbyPatty', img: 'assets/candy/bikini-bottom/krabby-patty.png' },
         { id: 'KelpJerkey', img: 'assets/candy/bikini-bottom/kelp-jerkey.png' },
         { id: 'CannedCoral', img: 'assets/candy/bikini-bottom/canned-coral.png' },
-        { id: 'Dorito', img: 'assets/candy/bikini-bottom/canned-coral.png' },
-        { id: 'Marshmellow', img: 'assets/candy/bikini-bottom/kelp-jerkey.png' },
-        { id: 'FireMan', img: 'assets/candy/bikini-bottom/krabby-patty.png' }
+        { id: 'BranFlakes', img: 'assets/candy/bikini-bottom/bran-flakes.png' },
+        { id: 'PattyCake', img: 'assets/candy/bikini-bottom/patty-cake.png' },
+        { id: 'Peanut', img: 'assets/candy/bikini-bottom/peanut.png' }
     ]
 };
