@@ -1,3 +1,10 @@
+V1.4.6- - - 
+Chapter 2 Maps now have custom sound effects for combo hitting bombs and moving Introduced.
+New Maps:
+Fizz City | 1.60% Multiplier
+Gems are now introduced with 1 being earned every 1 min of playtime in a single match. Gem shop,
+Purchasable islands, Multipliers in Gem Shop, 
+
 V1.3.6- - - 
 Bikini Bottom Map Fixes and Tweaks, Shop Price Tweaks, 
 

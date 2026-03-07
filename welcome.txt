@@ -6,7 +6,7 @@ Tagline: Match, Pop, and Blast your way through a sweet puzzle adventure!
 
 Description:
 Dive into the vibrant world of CandySwap, a fast-paced match-3 puzzle game designed for instant fun! Swap colorful candies to create massive combos, rack up high scores, and collect gold. Use your hard-earned treasure in the Island Shop to unlock stunning new backgrounds and customize your gameplay experience. With explosive candy bombs and satisfying chain reactions, CandySwap is the ultimate "pick-up-and-play" experience for puzzle lovers everywhere.
-
+=========================================
 Key Features:
 
 Classic Match-3 Gameplay: Simple to learn, yet challenging to master.
@@ -18,6 +18,12 @@ Island Shop: Earn gold by playing and unlock unique island themes.
 Responsive Design: Optimized for both mobile and desktop play.
 
 Immersive Audio: Satisfying sound effects and a catchy background score.
+
+=========================================
+NEW Pinned Features:
+Gem Shop: Purchase Gem Packs, Or buy islands earlier then you progress.
+Also buy score boosters to temporarily boost your score.
+
 
 =========================================
 HOW TO PLAY & GAME MECHANICS
@@ -49,16 +55,6 @@ THE SHOP & PROGRESSION
 Earning Gold: Every match you make on the board adds to your total gold count.
 
 Customization: Visit the "Island Shop" from the main menu.
-
-Unlockable Themes:
-
-Default Island (Owned)
-
-Candy Island (1,000 Gold)
-
-Chocolate Island (2,500 Gold)
-
-Gummy Island (5,000 Gold)
 
 Equipping: Once purchased, you can "Equip" an island to change the game's background wallpaper.
 

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Gem Shop - CandySwap</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/x-icon" href="assets/favicon.jpeg">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    :root {
+        --neon-pink: #ff00ff;
+        --neon-cyan: #00ffff;
+        --neon-yellow: #ffff00;
+        --neon-green: #39ff14;
+        --bg-deep: #050505;
+        --card-bg: rgba(15, 15, 15, 0.95);
+        --grid-color: rgba(0, 255, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--neon-pink); border: 2px solid var(--bg-deep); border-radius: 5px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+
+    * { 
+        box-sizing: border-box;
+        scrollbar-width: thin; 
+        scrollbar-color: var(--neon-pink) var(--bg-deep); 
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-deep);
+        /* Cyber-Grid Background */
+        background-image: 
+            linear-gradient(var(--grid-color) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+        background-size: 40px 40px;
+        color: white;
+        font-family: 'Press Start 2P', cursive;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Scanline Overlay Effect */
+    body::before {
+        content: " ";
+        display: block;
+        position: fixed;
+        top: 0; left: 0; bottom: 0; right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+        z-index: 999;
+        background-size: 100% 4px;
+        pointer-events: none;
+        opacity: 0.3;
+    }
+
+    /* Vignette for depth */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .navbar {
+        position: sticky;
+        top: 0;
+        background: rgba(0, 0, 0, 0.9);
+        border-bottom: 3px solid var(--neon-pink);
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 20px rgba(255, 0, 255, 0.2);
+    }
+
+    .back-btn {
+        background: transparent;
+        border: 2px solid var(--neon-pink);
+        color: var(--neon-pink);
+        padding: 8px 12px;
+        cursor: pointer;
+        font-family: 'Press Start 2P';
+        font-size: 10px;
+        text-decoration: none;
+        transition: all 0.2s;
+        text-transform: uppercase;
+    }
+
+    .back-btn:hover {
+        background: var(--neon-pink);
+        color: black;
+        box-shadow: 0 0 15px var(--neon-pink);
+    }
+
+    .stats-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .gold-display {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid var(--neon-cyan);
+        padding: 10px 15px;
+        color: var(--neon-cyan);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 4px;
+        box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.1);
+    }
+
+    .shop-container {
+        position: relative;
+        z-index: 5;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px 80px;
+    }
+
+    .shop-title {
+        text-align: center;
+        color: #fff;
+        font-size: 36px;
+        margin-bottom: 50px;
+        text-transform: uppercase;
+        letter-spacing: 6px;
+        text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+    }
+
+    .section-header {
+        color: var(--neon-cyan);
+        font-size: 16px;
+        margin: 60px 0 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .section-header::after {
+        content: "";
+        flex-grow: 1;
+        height: 2px;
+        background: linear-gradient(90deg, var(--neon-cyan), transparent);
+    }
+
+    .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .item-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 4px solid var(--neon-cyan);
+        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: 4px;
+    }
+
+    .item-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--neon-cyan);
+        box-shadow: 0 10px 30px rgba(0, 255, 255, 0.15);
+        background: rgba(25, 25, 25, 0.98);
+    }
+
+    .item-card.active-item {
+        border-top-color: var(--neon-yellow);
+        outline: 2px solid var(--neon-yellow);
+        outline-offset: -2px;
+    }
+
+    .item-icon-wrapper {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .item-icon { 
+        width: 64px; 
+        height: 64px; 
+        object-fit: contain;
+        filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+    }
+
+    .item-name { 
+        font-size: 12px; 
+        color: #fff; 
+        margin-bottom: 15px; 
+        min-height: 35px;
+        line-height: 1.4;
+        display: flex; align-items: center;
+    }
+
+    .item-desc { 
+        font-size: 9px; 
+        color: #aaa; 
+        line-height: 1.8; 
+        margin-bottom: 25px; 
+        min-height: 45px; 
+    }
+
+    .buy-btn, .equip-btn, .unequip-btn {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        font-family: 'Press Start 2P';
+        font-size: 9px;
+        cursor: pointer;
+        border-radius: 2px;
+        transition: all 0.2s;
+        text-transform: uppercase;
+    }
+
+    .buy-btn { 
+        background: var(--neon-green); 
+        color: #000;
+    }
+    .buy-btn:hover:not(:disabled) {
+        box-shadow: 0 0 20px var(--neon-green);
+        transform: scale(1.02);
+    }
+
+    .equip-btn { 
+        background: var(--neon-cyan); 
+        color: #000;
+    }
+    .equip-btn:hover {
+        box-shadow: 0 0 20px var(--neon-cyan);
+    }
+
+    .unequip-btn { 
+        background: #333; 
+        color: #fff;
+        border: 1px solid #555;
+    }
+
+    .buy-btn:disabled { 
+        background: #222; 
+        color: #555; 
+        cursor: not-allowed; 
+    }
+
+    .timer-badge {
+        position: absolute; 
+        top: 10px; 
+        right: 10px; 
+        background: var(--neon-yellow);
+        color: black; 
+        font-size: 8px; 
+        padding: 5px 8px; 
+        border-radius: 2px;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+    }
+
+    #msg-overlay {
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: #000; border: 2px solid var(--neon-pink); padding: 30px; z-index: 1000;
+        display: none; text-align: center; font-size: 11px; color: #fff;
+        box-shadow: 0 0 50px rgba(255, 0, 255, 0.4);
+        line-height: 2;
+    }
+
+    .countdown-text {
+        font-size: 9px;
+        color: var(--neon-yellow);
+        margin-top: 15px;
+        padding: 5px;
+        background: rgba(0,0,0,0.3);
+        border-radius: 4px;
+    }
+
+    @media (max-width: 600px) {
+        .shop-title { font-size: 24px; }
+        .shop-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="index.html" class="back-btn">< BACK</a>
+    <div class="stats-group">
+        <div class="gold-display">
+            <img src="assets/gem.png" style="width:20px; height:20px;" onerror="this.src='https://img.icons8.com/emoji/48/gem-stone.png'">
+            <span id="gem-count">0</span>
+        </div>
+    </div>
+</div>
+
+<div class="shop-container">
+    <h1 class="shop-title">GEM SHOP</h1>
+    
+    <div class="section-header">BOOSTERS</div>
+    <div class="shop-grid">
+        <div class="item-card">
+            <div id="mult2-badge" class="timer-badge">ACTIVE</div>
+            <div class="item-icon-wrapper"><img src="assets/icons/2x-boost.png" class="item-icon"></div>
+            <div class="item-name">2X SCORE BOOST</div>
+            <div class="item-desc">Double all points for 1 hour.</div>
+            <button id="mult2-btn" class="buy-btn" onclick="buyBoost('2x', 15)">BUY [15 GEMS]</button>
+            <div id="mult2-timer" class="countdown-text" style="display:none;"></div>
+        </div>
+
+        <div class="item-card" id="mult10-card">
+            <div id="mult10-badge" class="timer-badge">ACTIVE</div>
+            <div class="item-icon-wrapper"><img src="assets/icons/10x-boost.png" class="item-icon"></div>
+            <div class="item-name">ULTRA 10X BOOST</div>
+            <div class="item-desc">10x Score for 30 mins. 24h Cooldown.</div>
+            <button id="mult10-btn" class="buy-btn" onclick="buyBoost('10x', 30)">BUY [30 GEMS]</button>
+            <div id="mult10-timer" class="countdown-text" style="display:none; color:var(--neon-pink);"></div>
+        </div>
+    </div>
+
+    <div class="section-header">ISLAND-PRINT</div>
+    <div class="shop-grid" id="islands-grid"></div>
+</div>
+
+<div id="msg-overlay"></div>
+
+<audio id="buy-sfx" src="assets/sfx/buy.mp3" preload="auto"></audio>
+<audio id="equip-sfx" src="assets/sfx/equip.mp3" preload="auto"></audio>
+<script src="scripts/gempackages.js"></script>
+
+<script>
+    // Pull shared data from main storage keys
+    let gems = parseInt(localStorage.getItem('candySwap_gems')) || 0;
+    let owned = JSON.parse(localStorage.getItem('candySwap_owned')) || ['candy-fields'];
+    let activeIsland = localStorage.getItem('candySwap_activeIsland') || 'candy-fields';
+
+    const premiumIslands = [
+        { id: 'fizz-city', name: 'Fizz City', price: 30, desc: 'The Ultimate fizz soda experience', icon: 'assets/candy/fizz-city/pepsi.png' },
+        { id: 'frozen-valley', name: 'Frozen Valley', price: 50, desc: 'Frozen World', icon: 'assets/candy/frozen-valley/bomb.png' },
+        { id: 'magic-city-wizard101', name: 'WIZARD101: Magic City', price: 120, desc: 'Wizard101 Perks.', icon: 'assets/candy/magic-city/death-spell.png' }
+    ];
+
+    const buySfx = document.getElementById('buy-sfx');
+    const equipSfx = document.getElementById('equip-sfx');
+
+    function updateUI() {
+        document.getElementById('gem-count').innerText = gems;
+        renderIslands();
+        checkBoosts();
+    }
+
+    function renderIslands() {
+        const grid = document.getElementById('islands-grid');
+        grid.innerHTML = '';
+        premiumIslands.forEach(island => {
+            const isOwned = owned.includes(island.id);
+            const isActive = activeIsland === island.id;
+            
+            const card = document.createElement('div');
+            card.className = `item-card ${isActive ? 'active-item' : ''}`;
+            
+            let actionHtml = '';
+            if (isOwned) {
+                if (isActive) {
+                    actionHtml = `<button class="unequip-btn" onclick="unequipIsland()">UNEQUIP</button>`;
+                } else {
+                    actionHtml = `<button class="equip-btn" onclick="equipIsland('${island.id}')">EQUIP</button>`;
+                }
+            } else {
+                actionHtml = `<button class="buy-btn" onclick="buyIsland('${island.id}', ${island.price})">BUY [${island.price} GEMS]</button>`;
+            }
+
+            card.innerHTML = `
+                <div class="item-icon-wrapper"><img src="${island.icon}" class="item-icon" onerror="this.src='https://img.icons8.com/emoji/96/island-emoji.png'"></div>
+                <div class="item-name">${island.name}</div>
+                <div class="item-desc">${island.desc}</div>
+                ${actionHtml}
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    window.buyIsland = (id, price) => {
+        if (gems >= price) {
+            gems -= price; 
+            owned.push(id);
+            localStorage.setItem('candySwap_gems', gems);
+            localStorage.setItem('candySwap_owned', JSON.stringify(owned));
+            
+            buySfx.currentTime = 0;
+            buySfx.play().catch(() => {});
+            
+            // Automatically equip upon purchase
+            equipIsland(id, false); 
+            showMessage("ISLAND UNLOCKED!");
+        } else {
+            showMessage("INSUFFICIENT GEMS!");
+        }
+    };
+
+    window.equipIsland = (id, playSound = true) => {
+        activeIsland = id;
+        localStorage.setItem('candySwap_activeIsland', id);
+        
+        if (playSound) {
+            equipSfx.currentTime = 0;
+            equipSfx.play().catch(() => {});
+        }
+        
+        updateUI();
+        showMessage("ISLAND EQUIPPED!");
+    };
+
+    window.unequipIsland = () => {
+        activeIsland = 'candy-fields'; // Revert to default
+        localStorage.setItem('candySwap_activeIsland', 'candy-fields');
+        
+        equipSfx.currentTime = 0;
+        equipSfx.play().catch(() => {});
+        
+        updateUI();
+        showMessage("DEFAULT EQUIPPED");
+    };
+
+    function checkBoosts() {
+        const now = Date.now();
+        const exp2 = localStorage.getItem('gem_multiplier_expiry');
+        const btn2 = document.getElementById('mult2-btn');
+        const badge2 = document.getElementById('mult2-badge');
+        const timer2 = document.getElementById('mult2-timer');
+
+        if (exp2 && now < parseInt(exp2)) {
+            btn2.disabled = true; btn2.innerText = "RUNNING";
+            badge2.style.display = 'block'; timer2.style.display = 'block';
+            updateCountdown(parseInt(exp2), timer2);
+        } else {
+            btn2.disabled = false; badge2.style.display = 'none'; timer2.style.display = 'none';
+        }
+
+        const exp10 = localStorage.getItem('gem_mult10_expiry');
+        const cd10 = localStorage.getItem('gem_mult10_cooldown');
+        const btn10 = document.getElementById('mult10-btn');
+        const badge10 = document.getElementById('mult10-badge');
+        const timer10 = document.getElementById('mult10-timer');
+        const card10 = document.getElementById('mult10-card');
+
+        if (cd10 && now < parseInt(cd10)) {
+            btn10.disabled = true; btn10.innerText = "COOLDOWN";
+            timer10.style.display = 'block';
+            updateCountdown(parseInt(cd10), timer10, "CD: ");
+        } else if (exp10 && now < parseInt(exp10)) {
+            btn10.disabled = true; btn10.innerText = "ACTIVE";
+            badge10.style.display = 'block'; timer10.style.display = 'block';
+            updateCountdown(parseInt(exp10), timer10);
+        } else {
+            btn10.disabled = false; btn10.innerText = "BUY [30 GEMS]";
+            badge10.style.display = 'none'; timer10.style.display = 'none';
+        }
+    }
+
+    function updateCountdown(expiry, element, prefix = "") {
+        const update = () => {
+            const rem = expiry - Date.now();
+            if (rem <= 0) { checkBoosts(); return; }
+            const h = Math.floor(rem / 3600000), m = Math.floor((rem % 3600000) / 60000), s = Math.floor((rem % 60000) / 1000);
+            element.innerText = `${prefix}${h > 0 ? h + 'h ' : ''}${m}m ${s}s`;
+        };
+        update();
+        if (element.dataset.intv) clearInterval(element.dataset.intv);
+        element.dataset.intv = setInterval(update, 1000);
+    }
+
+    window.buyBoost = (type, price) => {
+        if (gems >= price) {
+            gems -= price;
+            localStorage.setItem('candySwap_gems', gems);
+            if (type === '2x') localStorage.setItem('gem_multiplier_expiry', Date.now() + 3600000);
+            else {
+                localStorage.setItem('gem_mult10_expiry', Date.now() + 1800000);
+                localStorage.setItem('gem_mult10_cooldown', Date.now() + 86400000);
+            }
+            updateUI();
+            buySfx.currentTime = 0;
+            buySfx.play().catch(() => {});
+            showMessage("BOOST PURCHASED!");
+        } else showMessage("INSUFFICIENT GEMS!");
+    };
+
+    function showMessage(t) {
+        const o = document.getElementById('msg-overlay');
+        o.innerText = t; o.style.display = 'block';
+        setTimeout(() => o.style.display = 'none', 2000);
+    }
+
+    // Initial load
+    updateUI();
+</script>
+</body>
+</html>

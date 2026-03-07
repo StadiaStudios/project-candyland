@@ -279,12 +279,15 @@
     <div id="pause-overlay">
         <div class="menu-title">PAUSED</div>
         <button class="menu-btn" id="resume-btn">RESUME</button>
-        <a href="shop.html"><button class="menu-btn">SHOP</button></a>
+        <a href="shop.html"><button class="menu-btn">CARRER</button></a>
+        <a href="gemshop.html"><button class="menu-btn">GEM SHOP</button></a>
         <button class="menu-btn secondary" id="restart-btn">CLAIM</button>
         <a href="settings.html"><button class="menu-btn secondary">SETTINGS</button></a>
     </div>
 
     <script src="vfx.js"></script>
+    <script src="scripts/gems.js"></script>
+    <script src="scripts/multiplier.js"></script>
     <script src="sound.js"></script>
     <script src="mainmenu.js"></script>
 
@@ -320,13 +323,23 @@
                         if (window.IslandTheme.boardImage) {
                             boardEl.style.backgroundImage = `url(${window.IslandTheme.boardImage})`;
                         }
-                        // Update Coin Icon if theme provides one
                         if (window.IslandTheme.currencyImage) {
                             const coinEl = document.getElementById('coin-icon');
                             if (coinEl) coinEl.src = window.IslandTheme.currencyImage;
                         }
-                        if (window.IslandTheme.music && typeof bgm !== 'undefined') {
-                            bgm.src = window.IslandTheme.music;
+                        
+                        // Custom Sound Effect Overrides logic
+                        if (window.IslandTheme.music && typeof window.bgm !== 'undefined') {
+                            window.bgm.src = window.IslandTheme.music;
+                        }
+                        if (window.IslandTheme.sfxMove && typeof window.sfxMove !== 'undefined') {
+                            window.sfxMove.src = window.IslandTheme.sfxMove;
+                        }
+                        if (window.IslandTheme.sfxCombo && typeof window.sfxCombo !== 'undefined') {
+                            window.sfxCombo.src = window.IslandTheme.sfxCombo;
+                        }
+                        if (window.IslandTheme.sfxBomb && typeof window.sfxBomb !== 'undefined') {
+                            window.sfxBomb.src = window.IslandTheme.sfxBomb;
                         }
                     }
                     resolve();

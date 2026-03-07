@@ -11,7 +11,12 @@ const sfxCombo = new Audio('assets/sfx/combo.mp3');
 const sfxPause = new Audio('assets/sfx/pause.mp3');
 const sfxBomb = new Audio('assets/sfx/bomb.mp3'); 
 const bgm = new Audio('assets/sfx/bgm.mp3');
-window.bgm = bgm; // This allows index.html to see the bgm object
+
+// Expose these to the window so index.html can change their sources per island
+window.bgm = bgm; 
+window.sfxMove = sfxMove;
+window.sfxCombo = sfxCombo;
+window.sfxBomb = sfxBomb;
 
 bgm.loop = true;
 bgm.volume = volumes.bgm;
